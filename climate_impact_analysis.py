@@ -1,14 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Day 2 — Climate Impact & Extreme Event Analysis
-=================================================
-Builds on Day 1 data. Covers:
-  - 10-year rolling average to smooth long-term trends
-  - Drought & extreme-rainfall year detection (1.5 σ thresholds)
-  - Correlation between seasonal and annual rainfall
-  - Correlation between monsoon and other seasons
-"""
-
 import os
 import sys
 import io
@@ -17,9 +6,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from scipy.stats import pearsonr
 
-# ---------------------------------------------------------------------------
-# 1. Data Loading (auto-downloads if missing)
-# ---------------------------------------------------------------------------
+# Data Loading (auto-downloads if missing)
 CSV_FILENAME = 'rainfall_India_1901-2015.csv'
 CSV_URL = (
     'https://raw.githubusercontent.com/chandanverma07/DataSets/master/'
@@ -52,9 +39,8 @@ def load_data():
 
 rainfall_data = load_data()
 
-# ---------------------------------------------------------------------------
-# 2. 10-Year Rolling Average
-# ---------------------------------------------------------------------------
+
+# 10-Year Rolling Average
 rainfall_data['10-Year Rolling Avg'] = rainfall_data['ANNUAL'].rolling(window=10).mean()
 
 fig_climate = go.Figure()
@@ -76,9 +62,8 @@ fig_climate.update_layout(
 )
 fig_climate.show()
 
-# ---------------------------------------------------------------------------
-# 3. Drought & Extreme Rainfall Years
-# ---------------------------------------------------------------------------
+
+# Drought & Extreme Rainfall Years
 mean_rainfall = rainfall_data['ANNUAL'].mean()
 std_dev       = rainfall_data['ANNUAL'].std()
 threshold     = 1.5 * std_dev
@@ -91,9 +76,7 @@ print(drought_years[['YEAR','ANNUAL']].reset_index(drop=True))
 print("\nExtreme Rainfall Years:")
 print(extreme_years[['YEAR','ANNUAL']].reset_index(drop=True))
 
-# ---------------------------------------------------------------------------
-# 4. Seasonal vs Annual Correlation
-# ---------------------------------------------------------------------------
+# Seasonal vs Annual Correlation
 seasonal_cols = ['Jan-Feb','Mar-May','Jun-Sep','Oct-Dec']
 seasonal_corr = {
     s: pearsonr(rainfall_data[s], rainfall_data['ANNUAL'])[0]
@@ -103,9 +86,7 @@ corr_df = pd.DataFrame.from_dict(seasonal_corr, orient='index', columns=['Correl
 print("\nSeasonal Correlation with Annual Total:")
 print(corr_df)
 
-# ---------------------------------------------------------------------------
-# 5. Monsoon vs Other Seasons Correlation
-# ---------------------------------------------------------------------------
+# Monsoon vs Other Seasons Correlation
 monsoon = 'Jun-Sep'
 non_monsoon = [c for c in seasonal_cols if c != monsoon]
 relationships = {
